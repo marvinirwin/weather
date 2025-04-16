@@ -3,7 +3,7 @@ import { Card } from '../ui/Card';
 import { InputField } from '../ui/InputField';
 import { useWeatherData } from '../../hooks/useWeatherData';
 import { AirPollutionData, AirPollutionParams } from '../../types/weatherTypes';
-import { useGeolocation } from '../../hooks/useGeolocation';
+import { useLocation } from '../../contexts/LocationContext';
 
 const DEFAULT_PARAMS: AirPollutionParams = {
   lat: 40.7128,
@@ -16,7 +16,7 @@ interface AirPollutionCardProps {
 }
 
 export function AirPollutionCard({ initialParams, rationale }: AirPollutionCardProps) {
-  const { latitude, longitude, isLoading: isLoadingLocation } = useGeolocation();
+  const { latitude, longitude, isLoading: isLoadingLocation } = useLocation();
   
   const [params, setParams] = useState<AirPollutionParams>({
     ...DEFAULT_PARAMS,
