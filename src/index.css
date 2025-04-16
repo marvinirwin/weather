@@ -1,0 +1,41 @@
+@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Wave background pattern */
+.wave-pattern {
+  background-color: #f0f9ff;
+  background-image: url("data:image/svg+xml,%3Csvg width='100%' height='100%' viewBox='0 0 1200 800' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='a' gradientUnits='userSpaceOnUse' x1='600' y1='25' x2='600' y2='777'%3E%3Cstop offset='0' stop-color='%233b82f6' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%2360a5fa' stop-opacity='0.1'/%3E%3C/linearGradient%3E%3ClinearGradient id='b' gradientUnits='userSpaceOnUse' x1='650' y1='25' x2='650' y2='777'%3E%3Cstop offset='0' stop-color='%233b82f6' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%2360a5fa' stop-opacity='0.1'/%3E%3C/linearGradient%3E%3ClinearGradient id='c' gradientUnits='userSpaceOnUse' x1='700' y1='25' x2='700' y2='777'%3E%3Cstop offset='0' stop-color='%233b82f6' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%2360a5fa' stop-opacity='0.1'/%3E%3C/linearGradient%3E%3ClinearGradient id='d' gradientUnits='userSpaceOnUse' x1='750' y1='25' x2='750' y2='777'%3E%3Cstop offset='0' stop-color='%233b82f6' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%2360a5fa' stop-opacity='0.1'/%3E%3C/linearGradient%3E%3ClinearGradient id='e' gradientUnits='userSpaceOnUse' x1='800' y1='25' x2='800' y2='777'%3E%3Cstop offset='0' stop-color='%233b82f6' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%2360a5fa' stop-opacity='0.1'/%3E%3C/linearGradient%3E%3ClinearGradient id='f' gradientUnits='userSpaceOnUse' x1='850' y1='25' x2='850' y2='777'%3E%3Cstop offset='0' stop-color='%233b82f6' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%2360a5fa' stop-opacity='0.1'/%3E%3C/linearGradient%3E%3ClinearGradient id='g' gradientUnits='userSpaceOnUse' x1='900' y1='25' x2='900' y2='777'%3E%3Cstop offset='0' stop-color='%233b82f6' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%2360a5fa' stop-opacity='0.1'/%3E%3C/linearGradient%3E%3ClinearGradient id='h' gradientUnits='userSpaceOnUse' x1='950' y1='25' x2='950' y2='777'%3E%3Cstop offset='0' stop-color='%233b82f6' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%2360a5fa' stop-opacity='0.1'/%3E%3C/linearGradient%3E%3ClinearGradient id='i' gradientUnits='userSpaceOnUse' x1='1000' y1='25' x2='1000' y2='777'%3E%3Cstop offset='0' stop-color='%233b82f6' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%2360a5fa' stop-opacity='0.1'/%3E%3C/linearGradient%3E%3ClinearGradient id='j' gradientUnits='userSpaceOnUse' x1='1050' y1='25' x2='1050' y2='777'%3E%3Cstop offset='0' stop-color='%233b82f6' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%2360a5fa' stop-opacity='0.1'/%3E%3C/linearGradient%3E%3ClinearGradient id='k' gradientUnits='userSpaceOnUse' x1='1100' y1='25' x2='1100' y2='777'%3E%3Cstop offset='0' stop-color='%233b82f6' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%2360a5fa' stop-opacity='0.1'/%3E%3C/linearGradient%3E%3ClinearGradient id='l' gradientUnits='userSpaceOnUse' x1='1150' y1='25' x2='1150' y2='777'%3E%3Cstop offset='0' stop-color='%233b82f6' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%2360a5fa' stop-opacity='0.1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg fill-opacity='0.1'%3E%3Cpath fill='url(%23a)' d='M0 0h50v800H0z'/%3E%3Cpath fill='url(%23b)' d='M50 0h50v800H50z'/%3E%3Cpath fill='url(%23c)' d='M100 0h50v800h-50z'/%3E%3Cpath fill='url(%23d)' d='M150 0h50v800h-50z'/%3E%3Cpath fill='url(%23e)' d='M200 0h50v800h-50z'/%3E%3Cpath fill='url(%23f)' d='M250 0h50v800h-50z'/%3E%3Cpath fill='url(%23g)' d='M300 0h50v800h-50z'/%3E%3Cpath fill='url(%23h)' d='M350 0h50v800h-50z'/%3E%3Cpath fill='url(%23i)' d='M400 0h50v800h-50z'/%3E%3Cpath fill='url(%23j)' d='M450 0h50v800h-50z'/%3E%3Cpath fill='url(%23k)' d='M500 0h50v800h-50z'/%3E%3Cpath fill='url(%23l)' d='M550 0h50v800h-50z'/%3E%3Cpath fill='url(%23a)' d='M600 0h50v800h-50z'/%3E%3Cpath fill='url(%23b)' d='M650 0h50v800h-50z'/%3E%3Cpath fill='url(%23c)' d='M700 0h50v800h-50z'/%3E%3Cpath fill='url(%23d)' d='M750 0h50v800h-50z'/%3E%3Cpath fill='url(%23e)' d='M800 0h50v800h-50z'/%3E%3Cpath fill='url(%23f)' d='M850 0h50v800h-50z'/%3E%3Cpath fill='url(%23g)' d='M900 0h50v800h-50z'/%3E%3Cpath fill='url(%23h)' d='M950 0h50v800h-50z'/%3E%3Cpath fill='url(%23i)' d='M1000 0h50v800h-50z'/%3E%3Cpath fill='url(%23j)' d='M1050 0h50v800h-50z'/%3E%3Cpath fill='url(%23k)' d='M1100 0h50v800h-50z'/%3E%3Cpath fill='url(%23l)' d='M1150 0h50v800h-50z'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+/* Form styling overrides */
+.form-input,
+.form-select {
+  @apply rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500;
+}
+
+/* Card hover effects */
+.card {
+  @apply transition-shadow duration-300 ease-in-out;
+}
+
+.card:hover {
+  @apply shadow-lg;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100 rounded-full;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 hover:bg-gray-400 rounded-full transition-colors;
+} 
