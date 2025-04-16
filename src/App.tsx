@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Navbar } from './components/ui/Navbar';
 import { CardGrid } from './components/CardGrid';
 import { useGeminiLayout } from './hooks/useGeminiLayout';
-import { TestTailwind } from './components/TestTailwind';
 
 export default function App() {
   const { layout, isLoading, error, generateLayout } = useGeminiLayout();
@@ -16,15 +15,15 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 via-blue-100 to-white">
-      <div className="wave-pattern absolute inset-0 opacity-10 z-0" />
+    <div className="min-h-screen bg-slate-900 text-slate-400">
+      <div className="wave-pattern absolute inset-0 opacity-5 z-0" />
       
       <Navbar onSearch={handleSearch} isLoading={isLoading} />
       
       <main className="relative z-10">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           {error && (
-            <div className="mb-6 rounded-md bg-red-50 p-4">
+            <div className="mb-6 rounded-md bg-red-900 p-4">
               <div className="flex">
                 <div className="flex-shrink-0">
                   <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
@@ -32,19 +31,13 @@ export default function App() {
                   </svg>
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm text-red-700">{error}</p>
+                  <p className="text-sm text-red-300">{error}</p>
                 </div>
               </div>
             </div>
           )}
           
-          <CardGrid cards={layout?.cards || []} />
-
-          <TestTailwind />
-
-          <div className="rounded-md bg-gray-100 p-4 m-4">
-            <p>Testing Tailwind CSS rounded-md class</p>
-          </div>
+          <CardGrid cards={layout?.cards || []} isLoading={isLoading} />
         </div>
       </main>
     </div>

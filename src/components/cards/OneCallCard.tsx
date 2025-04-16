@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '../ui/Card';
 import { InputField } from '../ui/InputField';
 import { SelectField } from '../ui/SelectField';
 import { useWeatherData } from '../../hooks/useWeatherData';
 import { OneCallParams } from '../../types/weatherTypes';
+import { useLocation } from '../../contexts/LocationContext';
 
 // Define the OneCall API response structure
 interface OneCallData {
@@ -119,10 +120,23 @@ interface OneCallCardProps {
 }
 
 export function OneCallCard({ initialParams, rationale }: OneCallCardProps) {
+  const { latitude, longitude, isLoading: isLoadingLocation } = useLocation();
+  
   const [params, setParams] = useState<OneCallParams>({
     ...DEFAULT_PARAMS,
     ...initialParams
   });
+
+  // Update coordinates when geolocation is retrieved
+  useEffect(() => {
+    if (latitude !== null && longitude !== null) {
+      setParams(prev => ({ 
+        ...prev, 
+        lat: latitude, 
+        lon: longitude 
+      }));
+    }
+  }, [latitude, longitude]);
 
   const { data, isLoading, error } = useWeatherData<OneCallParams, OneCallData>(
     'onecall',
@@ -188,7 +202,7 @@ export function OneCallCard({ initialParams, rationale }: OneCallCardProps) {
   return (
     <Card 
       title="Complete Weather Data" 
-      isLoading={isLoading}
+      isLoading={isLoading || isLoadingLocation}
       error={error}
       rationale={rationale}
     >
@@ -201,7 +215,7 @@ export function OneCallCard({ initialParams, rationale }: OneCallCardProps) {
             onChange={handleLatChange}
             step="0.0001"
             id="onecall-lat"
-            isLoading={isLoading}
+            isLoading={isLoading || isLoadingLocation}
           />
           <InputField
             label="Longitude"
@@ -210,7 +224,7 @@ export function OneCallCard({ initialParams, rationale }: OneCallCardProps) {
             onChange={handleLonChange}
             step="0.0001"
             id="onecall-lon"
-            isLoading={isLoading}
+            isLoading={isLoading || isLoadingLocation}
           />
         </div>
         
@@ -224,7 +238,7 @@ export function OneCallCard({ initialParams, rationale }: OneCallCardProps) {
             isLoading={isLoading}
           />
           <SelectField
-            label="Data to Exclude"
+            label="Exclude Data"
             id="onecall-exclude"
             value={params.exclude}
             onChange={handleExcludeChange}
@@ -235,17 +249,17 @@ export function OneCallCard({ initialParams, rationale }: OneCallCardProps) {
 
         {data && (
           <div className="mt-6">
-            <div className="bg-blue-50 rounded-lg p-4 mb-4">
+            <div className="bg-slate-700 rounded-lg p-4 mb-4">
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="text-lg font-medium text-gray-900">{data.timezone.split('/').pop()?.replace('_', ' ')}</h3>
-                  <p className="text-sm text-gray-500">
+                  <h3 className="text-lg font-medium text-white">{data.timezone.split('/').pop()?.replace('_', ' ')}</h3>
+                  <p className="text-sm text-slate-400">
                     {formatDate(data.current.dt)} {formatTime(data.current.dt)}
                   </p>
                 </div>
                 <div className="text-right">
-                  <div className="text-3xl font-bold">{formatTemp(data.current.temp)}</div>
-                  <div className="text-sm text-gray-500">Feels like {formatTemp(data.current.feels_like)}</div>
+                  <div className="text-3xl font-bold text-white">{formatTemp(data.current.temp)}</div>
+                  <div className="text-sm text-slate-400">Feels like {formatTemp(data.current.feels_like)}</div>
                 </div>
               </div>
               
@@ -258,52 +272,52 @@ export function OneCallCard({ initialParams, rationale }: OneCallCardProps) {
                       className="w-16 h-16"
                     />
                     <div className="ml-2">
-                      <div className="text-lg font-medium capitalize">{data.current.weather[0].description}</div>
+                      <div className="text-lg font-medium capitalize text-white">{data.current.weather[0].description}</div>
                     </div>
                   </>
                 )}
               </div>
               
-              <div className="mt-3 grid grid-cols-2 gap-4 text-sm">
+              <div className="mt-3 grid grid-cols-2 gap-4 text-sm text-slate-200">
                 <div>
-                  <span className="text-gray-500">Humidity:</span> {data.current.humidity}%
+                  <span className="text-slate-400">Humidity:</span> {data.current.humidity}%
                 </div>
                 <div>
-                  <span className="text-gray-500">Wind:</span> {data.current.wind_speed} {params.units === 'imperial' ? 'mph' : 'm/s'}
+                  <span className="text-slate-400">Wind:</span> {data.current.wind_speed} {params.units === 'imperial' ? 'mph' : 'm/s'}
                 </div>
                 <div>
-                  <span className="text-gray-500">UV Index:</span> {data.current.uvi}
+                  <span className="text-slate-400">UV Index:</span> {data.current.uvi}
                 </div>
                 <div>
-                  <span className="text-gray-500">Visibility:</span> {(data.current.visibility / 1000).toFixed(1)} km
+                  <span className="text-slate-400">Visibility:</span> {(data.current.visibility / 1000).toFixed(1)} km
                 </div>
               </div>
               
-              <div className="mt-3 flex justify-between text-sm">
+              <div className="mt-3 flex justify-between text-sm text-slate-200">
                 <div>
-                  <span className="text-gray-500">Sunrise:</span> {formatTime(data.current.sunrise)}
+                  <span className="text-slate-400">Sunrise:</span> {formatTime(data.current.sunrise)}
                 </div>
                 <div>
-                  <span className="text-gray-500">Sunset:</span> {formatTime(data.current.sunset)}
+                  <span className="text-slate-400">Sunset:</span> {formatTime(data.current.sunset)}
                 </div>
               </div>
             </div>
             
             {data.hourly && !params.exclude?.includes('hourly') && (
               <div className="mb-6">
-                <h4 className="font-medium text-gray-900 mb-3">Hourly Forecast</h4>
+                <h4 className="font-medium text-white mb-3">Hourly Forecast</h4>
                 <div className="overflow-x-auto pb-2">
                   <div className="flex gap-4">
                     {data.hourly.slice(0, 24).map(hour => (
                       <div key={hour.dt} className="flex-shrink-0 text-center w-16">
-                        <div className="text-xs text-gray-500">{formatTime(hour.dt)}</div>
+                        <div className="text-xs text-slate-400">{formatTime(hour.dt)}</div>
                         <img 
                           src={`https://openweathermap.org/img/wn/${hour.weather[0]?.icon}.png`}
                           alt={hour.weather[0]?.description || ''}
                           className="w-10 h-10 mx-auto"
                         />
-                        <div className="text-sm font-medium">{formatTemp(hour.temp)}</div>
-                        <div className="text-xs text-gray-500">{Math.round(hour.pop * 100)}%</div>
+                        <div className="text-sm font-medium text-slate-200">{formatTemp(hour.temp)}</div>
+                        <div className="text-xs text-slate-400">{Math.round(hour.pop * 100)}%</div>
                       </div>
                     ))}
                   </div>
@@ -313,24 +327,24 @@ export function OneCallCard({ initialParams, rationale }: OneCallCardProps) {
             
             {data.daily && !params.exclude?.includes('daily') && (
               <div>
-                <h4 className="font-medium text-gray-900 mb-3">7-Day Forecast</h4>
+                <h4 className="font-medium text-white mb-3">7-Day Forecast</h4>
                 <div className="space-y-3">
                   {data.daily.slice(0, 7).map(day => (
-                    <div key={day.dt} className="bg-gray-50 rounded-lg p-3 flex items-center justify-between">
-                      <div className="w-24 text-sm">{formatDate(day.dt)}</div>
+                    <div key={day.dt} className="bg-slate-700 rounded-lg p-3 flex items-center justify-between">
+                      <div className="w-24 text-sm text-slate-200">{formatDate(day.dt)}</div>
                       <div className="flex items-center flex-1">
                         <img
                           src={`https://openweathermap.org/img/wn/${day.weather[0]?.icon}.png`}
                           alt={day.weather[0]?.description || ''}
                           className="w-10 h-10"
                         />
-                        <div className="ml-1 text-xs capitalize">
+                        <div className="capitalize text-sm text-slate-200 ml-1">
                           {day.weather[0]?.description}
                         </div>
                       </div>
-                      <div className="w-24 text-right">
-                        <div className="text-sm font-medium">{formatTemp(day.temp.max)}</div>
-                        <div className="text-xs text-gray-500">{formatTemp(day.temp.min)}</div>
+                      <div className="text-right">
+                        <div className="text-sm font-medium text-white">{formatTemp(day.temp.max)}</div>
+                        <div className="text-xs text-slate-400">{formatTemp(day.temp.min)}</div>
                       </div>
                     </div>
                   ))}
@@ -342,4 +356,4 @@ export function OneCallCard({ initialParams, rationale }: OneCallCardProps) {
       </div>
     </Card>
   );
-} 
+}

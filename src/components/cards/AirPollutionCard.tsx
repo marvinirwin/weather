@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '../ui/Card';
 import { InputField } from '../ui/InputField';
 import { useWeatherData } from '../../hooks/useWeatherData';
 import { AirPollutionData, AirPollutionParams } from '../../types/weatherTypes';
+import { useGeolocation } from '../../hooks/useGeolocation';
 
 const DEFAULT_PARAMS: AirPollutionParams = {
   lat: 40.7128,
@@ -15,10 +16,23 @@ interface AirPollutionCardProps {
 }
 
 export function AirPollutionCard({ initialParams, rationale }: AirPollutionCardProps) {
+  const { latitude, longitude, isLoading: isLoadingLocation } = useGeolocation();
+  
   const [params, setParams] = useState<AirPollutionParams>({
     ...DEFAULT_PARAMS,
     ...initialParams
   });
+
+  // Update coordinates when geolocation is retrieved
+  useEffect(() => {
+    if (latitude !== null && longitude !== null) {
+      setParams(prev => ({ 
+        ...prev, 
+        lat: latitude, 
+        lon: longitude 
+      }));
+    }
+  }, [latitude, longitude]);
 
   const { data, isLoading, error } = useWeatherData<AirPollutionParams, AirPollutionData>(
     'air_pollution',
@@ -53,14 +67,14 @@ export function AirPollutionCard({ initialParams, rationale }: AirPollutionCardP
       case 5:
         return { label: 'Very Poor', color: 'bg-purple-600' };
       default:
-        return { label: 'Unknown', color: 'bg-gray-400' };
+        return { label: 'Unknown', color: 'bg-slate-400' };
     }
   };
 
   return (
     <Card 
       title="Air Pollution" 
-      isLoading={isLoading}
+      isLoading={isLoading || isLoadingLocation}
       error={error}
       rationale={rationale}
     >
@@ -73,7 +87,7 @@ export function AirPollutionCard({ initialParams, rationale }: AirPollutionCardP
             onChange={handleLatChange}
             step="0.0001"
             id="air-pollution-lat"
-            isLoading={isLoading}
+            isLoading={isLoading || isLoadingLocation}
           />
           <InputField
             label="Longitude"
@@ -82,7 +96,7 @@ export function AirPollutionCard({ initialParams, rationale }: AirPollutionCardP
             onChange={handleLonChange}
             step="0.0001"
             id="air-pollution-lon"
-            isLoading={isLoading}
+            isLoading={isLoading || isLoadingLocation}
           />
         </div>
 
@@ -90,8 +104,8 @@ export function AirPollutionCard({ initialParams, rationale }: AirPollutionCardP
           <div className="mt-6">
             <div className="flex justify-between items-center">
               <div>
-                <h3 className="text-lg font-medium text-gray-900">Air Quality Index</h3>
-                <p className="text-sm text-gray-500">
+                <h3 className="text-lg font-medium text-white">Air Quality Index</h3>
+                <p className="text-sm text-slate-400">
                   {new Date(data.list[0].dt * 1000).toLocaleString()}
                 </p>
               </div>
@@ -103,7 +117,7 @@ export function AirPollutionCard({ initialParams, rationale }: AirPollutionCardP
                       <div className={`w-12 h-12 rounded-full ${aqiInfo.color} flex items-center justify-center text-white font-bold`}>
                         {data.list[0].main.aqi}
                       </div>
-                      <div className="text-sm mt-1">{aqiInfo.label}</div>
+                      <div className="text-sm mt-1 text-slate-200">{aqiInfo.label}</div>
                     </div>
                   );
                 })()}
@@ -111,36 +125,36 @@ export function AirPollutionCard({ initialParams, rationale }: AirPollutionCardP
             </div>
             
             <div className="mt-6">
-              <h4 className="text-sm font-medium text-gray-700 mb-3">Pollutants Concentration (μg/m³)</h4>
+              <h4 className="text-sm font-medium text-white mb-3">Pollutants Concentration (μg/m³)</h4>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <div className="text-xs text-gray-500">Carbon Monoxide (CO)</div>
-                  <div className="text-sm font-medium">{data.list[0].components.co.toFixed(2)}</div>
+                  <div className="text-xs text-slate-400">Carbon Monoxide (CO)</div>
+                  <div className="text-sm font-medium text-slate-200">{data.list[0].components.co.toFixed(2)}</div>
                 </div>
                 <div>
-                  <div className="text-xs text-gray-500">Nitrogen Dioxide (NO₂)</div>
-                  <div className="text-sm font-medium">{data.list[0].components.no2.toFixed(2)}</div>
+                  <div className="text-xs text-slate-400">Nitrogen Dioxide (NO₂)</div>
+                  <div className="text-sm font-medium text-slate-200">{data.list[0].components.no2.toFixed(2)}</div>
                 </div>
                 <div>
-                  <div className="text-xs text-gray-500">Ozone (O₃)</div>
-                  <div className="text-sm font-medium">{data.list[0].components.o3.toFixed(2)}</div>
+                  <div className="text-xs text-slate-400">Ozone (O₃)</div>
+                  <div className="text-sm font-medium text-slate-200">{data.list[0].components.o3.toFixed(2)}</div>
                 </div>
                 <div>
-                  <div className="text-xs text-gray-500">Sulphur Dioxide (SO₂)</div>
-                  <div className="text-sm font-medium">{data.list[0].components.so2.toFixed(2)}</div>
+                  <div className="text-xs text-slate-400">Sulphur Dioxide (SO₂)</div>
+                  <div className="text-sm font-medium text-slate-200">{data.list[0].components.so2.toFixed(2)}</div>
                 </div>
                 <div>
-                  <div className="text-xs text-gray-500">Fine Particles (PM2.5)</div>
-                  <div className="text-sm font-medium">{data.list[0].components.pm2_5.toFixed(2)}</div>
+                  <div className="text-xs text-slate-400">Fine Particles (PM2.5)</div>
+                  <div className="text-sm font-medium text-slate-200">{data.list[0].components.pm2_5.toFixed(2)}</div>
                 </div>
                 <div>
-                  <div className="text-xs text-gray-500">Coarse Particles (PM10)</div>
-                  <div className="text-sm font-medium">{data.list[0].components.pm10.toFixed(2)}</div>
+                  <div className="text-xs text-slate-400">Coarse Particles (PM10)</div>
+                  <div className="text-sm font-medium text-slate-200">{data.list[0].components.pm10.toFixed(2)}</div>
                 </div>
               </div>
             </div>
             
-            <div className="mt-6 text-xs text-gray-500">
+            <div className="mt-6 text-xs text-slate-400">
               <p>AQI scale (1-5): 1 = Good, 2 = Fair, 3 = Moderate, 4 = Poor, 5 = Very Poor</p>
             </div>
           </div>

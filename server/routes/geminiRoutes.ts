@@ -1,6 +1,7 @@
 import express from 'express';
-import { callGeminiTextOnly } from '../../gemini.server.js';
+import { callGeminiTextOnly } from '../gemini.server.js';
 import { WeatherCardType } from '../../src/types/weatherTypes.js';
+import { SchemaType } from '@google/generative-ai';
 
 const router = express.Router();
 
@@ -30,6 +31,18 @@ const AVAILABLE_CARD_TYPES = [
     description: 'Shows air quality data including Air Quality Index (AQI) and concentrations of various pollutants.',
     parameters: ['lat', 'lon'],
   },
+  {
+    type: 'geocode/direct',
+    name: 'Geocoding',
+    description: 'Converts location names to geographic coordinates (latitude and longitude).',
+    parameters: ['q', 'limit'],
+  },
+  {
+    type: 'geocode/reverse',
+    name: 'Reverse Geocoding',
+    description: 'Converts geographic coordinates to location names and address details.',
+    parameters: ['lat', 'lon', 'limit'],
+  },
 ];
 
 interface GeminiResponse {
@@ -44,6 +57,8 @@ router.post('/generate-layout', async (req, res) => {
     if (!query) {
       return res.status(400).json({ error: 'Query is required' });
     }
+    
+    console.log('Processing query:', query);
     
     const prompt = `
     You are a weather planning assistant. Based on the user's query, select the most relevant weather data cards to display.
@@ -61,7 +76,7 @@ router.post('/generate-layout', async (req, res) => {
     For each card you select, provide:
     1. Type (must be one of the available types)
     2. Parameters (provide latitude and longitude for the relevant location, and any other required parameters)
-    3. Rationale (why this card is useful for the user's query)
+    3. Rationale (why this card is useful for the user's query, explain it in a personal way like "this seven day forecast will help you plan your trip")
     
     Return the response as a JSON object with a "cards" array. Each card in the array should have "type", "parameters", and "rationale" properties.
     
@@ -119,7 +134,7 @@ router.post('/generate-layout', async (req, res) => {
           }
         }
       ],
-      functionCall: 'generateWeatherLayout'
+      functionCall: { name: 'generateWeatherLayout' }
     });
     
     res.json(response);

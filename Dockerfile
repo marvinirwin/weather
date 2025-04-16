@@ -35,4 +35,4 @@ ENV PORT=3001
 EXPOSE 3001
 
 # Start the application
-CMD ["node", "--loader", "ts-node/esm", "server/index.ts"] 
+CMD ["npm", "run", "server"] 

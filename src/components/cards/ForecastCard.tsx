@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '../ui/Card';
 import { InputField } from '../ui/InputField';
 import { SelectField } from '../ui/SelectField';
 import { useWeatherData } from '../../hooks/useWeatherData';
 import { ForecastData, ForecastParams } from '../../types/weatherTypes';
+import { useLocation } from '../../contexts/LocationContext';
 
 const DEFAULT_PARAMS: ForecastParams = {
   lat: 40.7128,
@@ -23,10 +24,23 @@ interface ForecastCardProps {
 }
 
 export function ForecastCard({ initialParams, rationale }: ForecastCardProps) {
+  const { latitude, longitude, isLoading: isLoadingLocation } = useLocation();
+  
   const [params, setParams] = useState<ForecastParams>({
     ...DEFAULT_PARAMS,
     ...initialParams
   });
+
+  // Update coordinates when geolocation is retrieved
+  useEffect(() => {
+    if (latitude !== null && longitude !== null) {
+      setParams(prev => ({ 
+        ...prev, 
+        lat: latitude, 
+        lon: longitude 
+      }));
+    }
+  }, [latitude, longitude]);
 
   const { data, isLoading, error } = useWeatherData<ForecastParams, ForecastData>(
     'forecast',
@@ -69,7 +83,7 @@ export function ForecastCard({ initialParams, rationale }: ForecastCardProps) {
   };
 
   // Group forecast data by day
-  const groupByDay = (forecastData?: ForecastData) => {
+  const groupByDay = (forecastData: ForecastData | null | undefined) => {
     if (!forecastData || !forecastData.list) return [];
 
     const grouped: Record<string, typeof forecastData.list> = {};
@@ -132,7 +146,7 @@ export function ForecastCard({ initialParams, rationale }: ForecastCardProps) {
   return (
     <Card 
       title="5-Day Forecast" 
-      isLoading={isLoading}
+      isLoading={isLoading || isLoadingLocation}
       error={error}
       rationale={rationale}
     >
@@ -145,7 +159,7 @@ export function ForecastCard({ initialParams, rationale }: ForecastCardProps) {
             onChange={handleLatChange}
             step="0.0001"
             id="forecast-lat"
-            isLoading={isLoading}
+            isLoading={isLoading || isLoadingLocation}
           />
           <InputField
             label="Longitude"
@@ -154,7 +168,7 @@ export function ForecastCard({ initialParams, rationale }: ForecastCardProps) {
             onChange={handleLonChange}
             step="0.0001"
             id="forecast-lon"
-            isLoading={isLoading}
+            isLoading={isLoading || isLoadingLocation}
           />
         </div>
         
@@ -169,15 +183,15 @@ export function ForecastCard({ initialParams, rationale }: ForecastCardProps) {
 
         {data && (
           <div className="mt-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+            <h3 className="text-lg font-medium text-white mb-4">
               {data.city.name}, {data.city.country}
             </h3>
             
             <div className="space-y-4">
               {groupedData.map((day) => (
-                <div key={day.date} className="bg-gray-50 rounded-lg p-4">
+                <div key={day.date} className="bg-slate-700 rounded-lg p-4">
                   <div className="flex items-center justify-between">
-                    <div className="font-medium">
+                    <div className="font-medium text-white">
                       {new Date(day.date).toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })}
                     </div>
                     <div className="flex items-center">
@@ -189,8 +203,8 @@ export function ForecastCard({ initialParams, rationale }: ForecastCardProps) {
                         />
                       )}
                       <div className="text-right ml-2">
-                        <div className="text-sm font-medium">{formatTemp(day.maxTemp)}</div>
-                        <div className="text-xs text-gray-500">{formatTemp(day.minTemp)}</div>
+                        <div className="text-sm font-medium text-white">{formatTemp(day.maxTemp)}</div>
+                        <div className="text-xs text-slate-400">{formatTemp(day.minTemp)}</div>
                       </div>
                     </div>
                   </div>
@@ -199,7 +213,7 @@ export function ForecastCard({ initialParams, rationale }: ForecastCardProps) {
                     <div className="flex gap-3 pb-2">
                       {day.items.map((item) => (
                         <div key={item.dt} className="flex-shrink-0 text-center">
-                          <div className="text-xs">
+                          <div className="text-xs text-slate-400">
                             {new Date(item.dt * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                           </div>
                           <img 
@@ -207,7 +221,7 @@ export function ForecastCard({ initialParams, rationale }: ForecastCardProps) {
                             alt={item.weather[0]?.description || ''}
                             className="w-8 h-8 mx-auto"
                           />
-                          <div className="text-xs font-medium">{formatTemp(item.main.temp)}</div>
+                          <div className="text-xs font-medium text-slate-200">{formatTemp(item.main.temp)}</div>
                         </div>
                       ))}
                     </div>
