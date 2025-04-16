@@ -3,7 +3,6 @@ import { Card } from '../ui/Card';
 import { InputField } from '../ui/InputField';
 import { useWeatherData } from '../../hooks/useWeatherData';
 import { AirPollutionData, AirPollutionParams } from '../../types/weatherTypes';
-import { useLocation } from '../../contexts/LocationContext';
 
 const DEFAULT_PARAMS: AirPollutionParams = {
   lat: 40.7128,
@@ -16,23 +15,10 @@ interface AirPollutionCardProps {
 }
 
 export function AirPollutionCard({ initialParams, rationale }: AirPollutionCardProps) {
-  const { latitude, longitude, isLoading: isLoadingLocation } = useLocation();
-  
   const [params, setParams] = useState<AirPollutionParams>({
     ...DEFAULT_PARAMS,
     ...initialParams
   });
-
-  // Update coordinates when geolocation is retrieved
-  useEffect(() => {
-    if (latitude !== null && longitude !== null) {
-      setParams(prev => ({ 
-        ...prev, 
-        lat: latitude, 
-        lon: longitude 
-      }));
-    }
-  }, [latitude, longitude]);
 
   const { data, isLoading, error } = useWeatherData<AirPollutionParams, AirPollutionData>(
     'air_pollution',
@@ -73,8 +59,8 @@ export function AirPollutionCard({ initialParams, rationale }: AirPollutionCardP
 
   return (
     <Card 
-      title="Air Pollution" 
-      isLoading={isLoading || isLoadingLocation}
+      title="Air Pollution"
+      isLoading={isLoading}
       error={error}
       rationale={rationale}
     >
@@ -86,8 +72,8 @@ export function AirPollutionCard({ initialParams, rationale }: AirPollutionCardP
             value={params.lat}
             onChange={handleLatChange}
             step="0.0001"
-            id="air-pollution-lat"
-            isLoading={isLoading || isLoadingLocation}
+            id="air-lat"
+            isLoading={isLoading}
           />
           <InputField
             label="Longitude"
@@ -95,8 +81,8 @@ export function AirPollutionCard({ initialParams, rationale }: AirPollutionCardP
             value={params.lon}
             onChange={handleLonChange}
             step="0.0001"
-            id="air-pollution-lon"
-            isLoading={isLoading || isLoadingLocation}
+            id="air-lon"
+            isLoading={isLoading}
           />
         </div>
 

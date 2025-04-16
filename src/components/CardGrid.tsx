@@ -7,6 +7,7 @@ import { OneCallCard } from './cards/OneCallCard';
 import { AirPollutionCard } from './cards/AirPollutionCard';
 import { GeocodingCard } from './cards/GeocodingCard';
 import { ReverseGeocodingCard } from './cards/ReverseGeocodingCard';
+import { useLocation } from '../contexts/LocationContext';
 
 interface CardGridProps {
   cards: WeatherCardType[];
@@ -15,22 +16,29 @@ interface CardGridProps {
 
 export function CardGrid({ cards = [], isLoading = false }: CardGridProps) {
   const [visibleCards, setVisibleCards] = useState<number[]>([]);
+  const { latitude, longitude, error, isLoading: isLocationLoading } = useLocation();
   
   // If no cards provided, show all card types with default params
   const displayCards = useMemo(() => {
-    return cards.length > 0 ? cards : [
-      { type: 'current', parameters: { lat: 40.7128, lon: -74.0060, units: 'metric' } },
-      { type: 'forecast', parameters: { lat: 40.7128, lon: -74.0060, units: 'metric' } },
-      { type: 'onecall', parameters: { lat: 40.7128, lon: -74.0060, units: 'metric' } },
-      { type: 'air_pollution', parameters: { lat: 40.7128, lon: -74.0060 } },
+    if (cards.length > 0) return cards;
+    
+    // Use user location if available, otherwise default to New York
+    const lat = latitude ?? 40.7128;
+    const lon = longitude ?? -74.0060;
+    
+    return [
+      { type: 'current', parameters: { lat, lon, units: 'metric' } },
+      { type: 'forecast', parameters: { lat, lon, units: 'metric' } },
+      { type: 'onecall', parameters: { lat, lon, units: 'metric' } },
+      { type: 'air_pollution', parameters: { lat, lon } },
       { type: 'geocoding', parameters: { query: 'New York', limit: 5 } },
-      { type: 'reverse_geocoding', parameters: { lat: 40.7128, lon: -74.0060, limit: 3 } },
+      { type: 'reverse_geocoding', parameters: { lat, lon, limit: 3 } },
     ];
-  }, [cards]);
+  }, [cards, latitude, longitude]);
 
   useEffect(() => {
-    // Don't show cards while loading
-    if (isLoading) {
+    // Don't show cards while loading or waiting for location permission
+    if (isLoading || isLocationLoading) {
       setVisibleCards([]);
       return;
     }
@@ -46,7 +54,7 @@ export function CardGrid({ cards = [], isLoading = false }: CardGridProps) {
         setVisibleCards(prev => [...prev, index]);
       }, delay * (index + 1));
     });
-  }, [isLoading]);
+  }, [isLoading, isLocationLoading, displayCards]);
 
   // Dynamic breakpoints based on number of cards
   const maxColumns = Math.min(displayCards.length, 3);
@@ -78,6 +86,11 @@ export function CardGrid({ cards = [], isLoading = false }: CardGridProps) {
 
   // Weather-themed loading animation component
   const WeatherLoadingAnimation = () => {
+    // Show a message based on location loading state
+    const loadingMessage = isLocationLoading ? 
+      "" : 
+      "";
+      
     return (
       <div className="flex flex-col items-center justify-center w-full h-full min-h-[calc(100vh-180px)]">
         <div className="relative w-64 h-64">
@@ -169,7 +182,9 @@ export function CardGrid({ cards = [], isLoading = false }: CardGridProps) {
             </div>
           </div>
         </div>
-        <p className="mt-6 text-slate-300 font-medium animate-pulse"></p>
+        <p className="mt-6 text-slate-300 font-medium animate-pulse">
+          {loadingMessage}
+        </p>
         <style>
           {`
           @keyframes spin {
@@ -187,7 +202,8 @@ export function CardGrid({ cards = [], isLoading = false }: CardGridProps) {
     );
   };
 
-  if (isLoading) {
+  // Show loading screen while loading OR waiting for location permission
+  if (isLoading || isLocationLoading) {
     return <WeatherLoadingAnimation />;
   }
 

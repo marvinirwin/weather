@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card } from '../ui/Card';
 import { InputField } from '../ui/InputField';
 import { SelectField } from '../ui/SelectField';
 import { useWeatherData } from '../../hooks/useWeatherData';
-import { OneCallParams } from '../../types/weatherTypes';
-import { useLocation } from '../../contexts/LocationContext';
+import { OneCallData, OneCallParams } from '../../types/weatherTypes';
+import { CurrentWeatherDisplay } from './subcomponents/CurrentWeatherDisplay';
+import { DailyForecastDisplay } from './subcomponents/DailyForecastDisplay';
+import { HourlyForecastDisplay } from './subcomponents/HourlyForecastDisplay';
+import { MinutelyForecastDisplay } from './subcomponents/MinutelyForecastDisplay';
 
 // Define the OneCall API response structure
 interface OneCallData {
@@ -120,23 +123,10 @@ interface OneCallCardProps {
 }
 
 export function OneCallCard({ initialParams, rationale }: OneCallCardProps) {
-  const { latitude, longitude, isLoading: isLoadingLocation } = useLocation();
-  
   const [params, setParams] = useState<OneCallParams>({
     ...DEFAULT_PARAMS,
     ...initialParams
   });
-
-  // Update coordinates when geolocation is retrieved
-  useEffect(() => {
-    if (latitude !== null && longitude !== null) {
-      setParams(prev => ({ 
-        ...prev, 
-        lat: latitude, 
-        lon: longitude 
-      }));
-    }
-  }, [latitude, longitude]);
 
   const { data, isLoading, error } = useWeatherData<OneCallParams, OneCallData>(
     'onecall',
@@ -201,50 +191,52 @@ export function OneCallCard({ initialParams, rationale }: OneCallCardProps) {
 
   return (
     <Card 
-      title="Complete Weather Data" 
-      isLoading={isLoading || isLoadingLocation}
+      title="One Call API" 
+      isLoading={isLoading}
       error={error}
       rationale={rationale}
     >
-      <div className="space-y-4">
-        <div className="grid grid-cols-2 gap-3">
-          <InputField
-            label="Latitude"
-            type="number"
-            value={params.lat}
-            onChange={handleLatChange}
-            step="0.0001"
-            id="onecall-lat"
-            isLoading={isLoading || isLoadingLocation}
-          />
-          <InputField
-            label="Longitude"
-            type="number"
-            value={params.lon}
-            onChange={handleLonChange}
-            step="0.0001"
-            id="onecall-lon"
-            isLoading={isLoading || isLoadingLocation}
-          />
-        </div>
-        
-        <div className="grid grid-cols-2 gap-3">
-          <SelectField
-            label="Temperature Units"
-            id="onecall-units"
-            value={params.units}
-            onChange={handleUnitsChange}
-            options={UNITS_OPTIONS}
-            isLoading={isLoading}
-          />
-          <SelectField
-            label="Exclude Data"
-            id="onecall-exclude"
-            value={params.exclude}
-            onChange={handleExcludeChange}
-            options={EXCLUDE_OPTIONS}
-            isLoading={isLoading}
-          />
+      <div className="space-y-6">
+        <div className="space-y-4 p-4 bg-slate-800 rounded-lg">
+          <div className="grid grid-cols-2 gap-3">
+            <InputField
+              label="Latitude"
+              type="number"
+              value={params.lat}
+              onChange={handleLatChange}
+              step="0.0001"
+              id="onecall-lat"
+              isLoading={isLoading}
+            />
+            <InputField
+              label="Longitude"
+              type="number"
+              value={params.lon}
+              onChange={handleLonChange}
+              step="0.0001"
+              id="onecall-lon"
+              isLoading={isLoading}
+            />
+          </div>
+          
+          <div className="grid grid-cols-2 gap-3">
+            <SelectField
+              label="Temperature Units"
+              id="onecall-units"
+              value={params.units}
+              onChange={handleUnitsChange}
+              options={UNITS_OPTIONS}
+              isLoading={isLoading}
+            />
+            <SelectField
+              label="Exclude Data"
+              id="onecall-exclude"
+              value={params.exclude}
+              onChange={handleExcludeChange}
+              options={EXCLUDE_OPTIONS}
+              isLoading={isLoading}
+            />
+          </div>
         </div>
 
         {data && (

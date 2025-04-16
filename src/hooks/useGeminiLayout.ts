@@ -16,6 +16,16 @@ export function useGeminiLayout() {
   });
 
   const generateLayout = async (query: string) => {
+    // If the query is empty, reset state and do nothing else
+    if (query.trim() === '') {
+      setState({
+        layout: null,
+        isLoading: false,
+        error: null,
+      });
+      return; // Exit early
+    }
+
     setState({
       layout: null,
       isLoading: true,

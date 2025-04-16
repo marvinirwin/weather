@@ -3,7 +3,6 @@ import { Card } from '../ui/Card';
 import { InputField } from '../ui/InputField';
 import { useWeatherData } from '../../hooks/useWeatherData';
 import { GeocodingData, GeocodingParams } from '../../types/weatherTypes';
-import { useLocation } from '../../contexts/LocationContext';
 
 const DEFAULT_PARAMS: GeocodingParams = {
   query: 'New York',
@@ -16,22 +15,10 @@ interface GeocodingCardProps {
 }
 
 export function GeocodingCard({ initialParams, rationale }: GeocodingCardProps) {
-  const { cityName, isLoading: isLoadingLocation } = useLocation();
-  
   const [params, setParams] = useState<GeocodingParams>({
     ...DEFAULT_PARAMS,
     ...initialParams
   });
-
-  // Update city name when geolocation is retrieved
-  useEffect(() => {
-    if (cityName) {
-      setParams(prev => ({ 
-        ...prev, 
-        query: cityName 
-      }));
-    }
-  }, [cityName]);
 
   // Transform the params to match the API's expected format
   // Use useMemo to prevent recreating the object on every render
@@ -59,7 +46,7 @@ export function GeocodingCard({ initialParams, rationale }: GeocodingCardProps) 
   return (
     <Card 
       title="Geocoding" 
-      isLoading={isLoading || isLoadingLocation}
+      isLoading={isLoading}
       error={error}
       rationale={rationale}
     >
@@ -70,7 +57,7 @@ export function GeocodingCard({ initialParams, rationale }: GeocodingCardProps) 
           value={params.query}
           onChange={handleQueryChange}
           id="geocoding-query"
-          isLoading={isLoading || isLoadingLocation}
+          isLoading={isLoading}
           placeholder="Enter city name, state code and country code"
         />
         

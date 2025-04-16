@@ -7,6 +7,16 @@ export default function App() {
   const { layout, isLoading, error, generateLayout } = useGeminiLayout();
 
   const handleSearch = async (query: string) => {
+    if (query.trim() === '') {
+      // If the query is empty, reset the layout but don't fetch
+      // generateLayout already sets layout to null initially, 
+      // so we just need to ensure it's called to reset state
+      // without making the API call.
+      // We can potentially add a dedicated reset function to the hook later if needed.
+      generateLayout(''); // Call with empty to reset state, but it won't proceed to API call
+      return; 
+    }
+    
     try {
       await generateLayout(query);
     } catch (err) {

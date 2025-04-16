@@ -4,7 +4,6 @@ import { InputField } from '../ui/InputField';
 import { SelectField } from '../ui/SelectField';
 import { useWeatherData } from '../../hooks/useWeatherData';
 import { ForecastData, ForecastParams } from '../../types/weatherTypes';
-import { useLocation } from '../../contexts/LocationContext';
 
 const DEFAULT_PARAMS: ForecastParams = {
   lat: 40.7128,
@@ -24,23 +23,10 @@ interface ForecastCardProps {
 }
 
 export function ForecastCard({ initialParams, rationale }: ForecastCardProps) {
-  const { latitude, longitude, isLoading: isLoadingLocation } = useLocation();
-  
   const [params, setParams] = useState<ForecastParams>({
     ...DEFAULT_PARAMS,
     ...initialParams
   });
-
-  // Update coordinates when geolocation is retrieved
-  useEffect(() => {
-    if (latitude !== null && longitude !== null) {
-      setParams(prev => ({ 
-        ...prev, 
-        lat: latitude, 
-        lon: longitude 
-      }));
-    }
-  }, [latitude, longitude]);
 
   const { data, isLoading, error } = useWeatherData<ForecastParams, ForecastData>(
     'forecast',
@@ -145,8 +131,8 @@ export function ForecastCard({ initialParams, rationale }: ForecastCardProps) {
 
   return (
     <Card 
-      title="5-Day Forecast" 
-      isLoading={isLoading || isLoadingLocation}
+      title="5-Day Forecast"
+      isLoading={isLoading}
       error={error}
       rationale={rationale}
     >
@@ -159,7 +145,7 @@ export function ForecastCard({ initialParams, rationale }: ForecastCardProps) {
             onChange={handleLatChange}
             step="0.0001"
             id="forecast-lat"
-            isLoading={isLoading || isLoadingLocation}
+            isLoading={isLoading}
           />
           <InputField
             label="Longitude"
@@ -168,7 +154,7 @@ export function ForecastCard({ initialParams, rationale }: ForecastCardProps) {
             onChange={handleLonChange}
             step="0.0001"
             id="forecast-lon"
-            isLoading={isLoading || isLoadingLocation}
+            isLoading={isLoading}
           />
         </div>
         

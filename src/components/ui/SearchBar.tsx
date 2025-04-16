@@ -95,7 +95,13 @@ export function SearchBar({ onSearch, isLoading = false, placeholder = "Going to
               className="w-full border-0 py-4 pl-4 pr-14 text-sm text-slate-200 bg-transparent ring-1 ring-inset ring-slate-600 placeholder:text-slate-400 focus:ring-2 focus:ring-primary rounded-lg relative z-10"
               placeholder={placeholder}
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => {
+                const newValue = e.target.value;
+                setQuery(newValue);
+                if (newValue.trim() === '') {
+                  onSearch('');
+                }
+              }}
               onKeyDown={handleKeyDown}
               disabled={isLoading}
             />

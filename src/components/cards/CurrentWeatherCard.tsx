@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card } from '../ui/Card';
 import { InputField } from '../ui/InputField';
 import { SelectField } from '../ui/SelectField';
 import { useWeatherData } from '../../hooks/useWeatherData';
 import { CurrentWeatherData, CurrentWeatherParams } from '../../types/weatherTypes';
-import { useLocation } from '../../contexts/LocationContext';
 
 const DEFAULT_PARAMS: CurrentWeatherParams = {
   lat: 40.7128,
@@ -24,23 +23,10 @@ interface CurrentWeatherCardProps {
 }
 
 export function CurrentWeatherCard({ initialParams, rationale }: CurrentWeatherCardProps) {
-  const { latitude, longitude, isLoading: isLoadingLocation } = useLocation();
-  
   const [params, setParams] = useState<CurrentWeatherParams>({
     ...DEFAULT_PARAMS,
     ...initialParams
   });
-
-  // Update coordinates when geolocation is retrieved
-  useEffect(() => {
-    if (latitude !== null && longitude !== null) {
-      setParams(prev => ({ 
-        ...prev, 
-        lat: latitude, 
-        lon: longitude 
-      }));
-    }
-  }, [latitude, longitude]);
 
   const { data, isLoading, error } = useWeatherData<CurrentWeatherParams, CurrentWeatherData>(
     'current',
@@ -85,7 +71,7 @@ export function CurrentWeatherCard({ initialParams, rationale }: CurrentWeatherC
   return (
     <Card 
       title="Current Weather" 
-      isLoading={isLoading || isLoadingLocation}
+      isLoading={isLoading}
       error={error}
       rationale={rationale}
     >
@@ -98,7 +84,7 @@ export function CurrentWeatherCard({ initialParams, rationale }: CurrentWeatherC
             onChange={handleLatChange}
             step="0.0001"
             id="current-lat"
-            isLoading={isLoading || isLoadingLocation}
+            isLoading={isLoading}
           />
           <InputField
             label="Longitude"
@@ -107,7 +93,7 @@ export function CurrentWeatherCard({ initialParams, rationale }: CurrentWeatherC
             onChange={handleLonChange}
             step="0.0001"
             id="current-lon"
-            isLoading={isLoading || isLoadingLocation}
+            isLoading={isLoading}
           />
         </div>
         
